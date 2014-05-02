@@ -29,6 +29,11 @@ use React\EventLoop\Factory as EventLoopFactory;
 $loop = EventLoopFactory::create();
 $monitor = new RecursiveMonitor($loop, __DIR__);
 
+// Fired on any Inotify event:
+$monitor->on('notice', function($path, $root) {
+	echo "Notice: {$path} in {$root}\n";
+});
+
 $monitor->on('create', function($path, $root) {
 	echo "Created: {$path} in {$root}\n";
 });

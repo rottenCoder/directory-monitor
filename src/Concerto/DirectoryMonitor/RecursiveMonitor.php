@@ -10,6 +10,7 @@
 	const DELETE = 'delete';
 	const MODIFY = 'modify';
 	const WRITE = 'write';
+	const NOTICE = 'notice';
 
 	/**
 	 * Recursive directory monitor using Inotify.
@@ -118,6 +119,8 @@
 					else if (IN_CLOSE_WRITE === ($event->mask & IN_CLOSE_WRITE)) {
 						$this->emit(WRITE, [$relative, $this->directory]);
 					}
+
+					$this->emit(NOTICE, [$relative, $this->directory]);
 				}
 			}
 		}
