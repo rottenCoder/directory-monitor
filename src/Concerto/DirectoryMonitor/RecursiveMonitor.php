@@ -47,27 +47,16 @@
 		 */
 		protected $watchers;
 
-		public function __construct(LoopInterface $loop, $directory) {
-			$this->directory = realpath($directory);
+		public function __construct(LoopInterface $loop) {
 			$this->loop = $loop;
 			$this->mask = IN_CLOSE_WRITE | IN_CREATE | IN_DELETE | IN_MODIFY | IN_MOVE;
 			$this->paths = [];
 			$this->rules = [];
 			$this->watchers = [];
 
-			if (false === $this->directory || false === is_dir($this->directory)) {
-				throw new MonitorException("Given path '{$$directory}' does not exist.", MonitorException::NOT_EXIST);
-			}
-
-			if (false === is_dir($this->directory)) {
-				throw new MonitorException("Given path '{$$directory}' is not a directory.", MonitorException::NOT_DIRECTORY);
-			}
-
 			$this->handler = inotify_init();
 			stream_set_blocking($this->handler, 0);
 			$this->loop->addReadStream($this->handler, $this);
-
-			$this->add($this->directory);
 		}
 
 		public function __invoke() {
@@ -146,7 +135,13 @@
 			foreach (new DirectoryIterator($path) as $file) {
 				if ($file->isDot() || false === $file->isDir()) continue;
 
-				$this->add($file->getPathname());
+				$path = $file->getPathname();
+				$relative = $this->getRelativePath($this->directory, $path);
+
+				// Skip this directory:
+				if ($this->isPathIgnored('/' . $relative)) continue;
+
+				$this->add($path);
 			}
 		}
 
@@ -190,6 +185,20 @@
 			}
 
 			return rtrim(implode('/', $relPath), '/');
+		}
+
+		public function listen($directory) {
+			$this->directory = realpath($directory);
+
+			if (false === $this->directory || false === is_dir($this->directory)) {
+				throw new MonitorException("Given path '{$$directory}' does not exist.", MonitorException::NOT_EXIST);
+			}
+
+			if (false === is_dir($this->directory)) {
+				throw new MonitorException("Given path '{$$directory}' is not a directory.", MonitorException::NOT_DIRECTORY);
+			}
+
+			$this->add($this->directory);
 		}
 
 		/**

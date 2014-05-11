@@ -12,7 +12,7 @@
 		public function testBasics() {
 			$root = __DIR__ . '/Scratch';
 			$loop = EventLoopFactory::create();
-			$monitor = new RecursiveMonitor($loop, $root);
+			$monitor = new RecursiveMonitor($loop);
 			$log = (object)[
 				'create' =>		false,
 				'delete' =>		false,
@@ -46,6 +46,7 @@
 				$loop->stop();
 			});
 
+			$monitor->listen($root);
 			$loop->run();
 			$monitor->close();
 
@@ -58,13 +59,8 @@
 		public function testIgnore() {
 			$root = __DIR__ . '/Scratch';
 			$loop = EventLoopFactory::create();
-			$monitor = new RecursiveMonitor($loop, $root);
-			$log = (object)[
-				'create' =>		false,
-				'delete' =>		false,
-				'modify' =>		false,
-				'write' =>		false
-			];
+			$monitor = new RecursiveMonitor($loop);
+			$monitor->listen($root);
 
 			$monitor->ignore('/foobar$');
 
