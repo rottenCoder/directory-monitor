@@ -15,12 +15,10 @@
 	"require": {
 		"php": ">=5.4.0",
 		"ext-inotify": "*",
+		"concerto/installers": "dev-master",
 		"concerto/text-expressions": "0.*",
 		"evenement/evenement": "2.0.*",
 		"react/event-loop": "0.4.*"
-	},
-	"require-dev": {
-		"phpunit/phpunit": "4.*"
 	},
 	"autoload": {
 		"psr-0": {
