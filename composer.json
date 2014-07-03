@@ -2,7 +2,7 @@
 	"name": "concerto/directory-monitor",
 	"description": "Library for monitoring a directory for changes using Inotify.",
 	"keywords": ["http", "pool"],
-	"type": "library",
+	"type": "concerto-component",
 	"license": "MIT",
 	"authors": [
 		{
